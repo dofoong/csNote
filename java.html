@@ -1,236 +1,338 @@
-<section id="java-basics">
+<section id="java">
   <h2>1️⃣ 자바 기본 & 메모리 구조</h2>
 
+  <!-- 1. Primitive vs Reference Type -->
   <article id="q1">
-    <h3>🧩 1. Stack과 Heap의 차이</h3>
-    <h4>🪄 기초</h4>
-    <ul>
-      <li><b>Stack</b>: 함수 호출 시 지역 변수나 매개변수를 저장하는 임시 공간.</li>
-      <li><b>Heap</b>: <code>new</code>로 생성된 객체가 저장되는 공간.</li>
-    </ul>
-    <blockquote>Stack은 빠르지만 휘발성, Heap은 느리지만 오래 저장.</blockquote>
+    <h3>🧩 1. 기본형(Primitive) vs 참조형(Reference)</h3>
 
-    <h4>⚙️ 핵심</h4>
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      자바의 변수는 크게 <b>기본형(Primitive)</b>과 <b>참조형(Reference)</b>으로 나뉩니다.  
+      기본형은 값 자체를 저장하고, 참조형은 <b>객체의 주소를 참조</b>합니다.  
+      기본형은 Stack에, 참조형은 Heap에 저장되는 구조입니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
     <ul>
-      <li>Stack은 <b>LIFO</b> 구조로 메서드 호출마다 프레임 생성/소멸.</li>
-      <li>Heap은 <b>GC(Garbage Collector)</b>가 관리하며 참조 끊기면 제거.</li>
+      <li>Primitive: int, boolean, double 등 (값 저장)</li>
+      <li>Reference: String, 배열, 클래스 등 (객체 주소 저장)</li>
+      <li>기본형은 Stack, 참조형은 Heap에 위치</li>
+      <li>Null 가능 여부: 기본형 ❌ / 참조형 ⭕</li>
     </ul>
 
-    <h4>🔬 심화</h4>
-    <ul>
-      <li><b>StackOverflowError</b> → 재귀 호출 과다 시 발생.</li>
-      <li><b>OutOfMemoryError</b> → Heap 객체 과다 생성 시 발생.</li>
-      <li>실무 팁: 대량 객체는 지역변수 참조를 빨리 끊어 GC 유도.</li>
-    </ul>
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>int a = 10;
+Integer b = 10;
+System.out.println(a == b); // true (auto-unboxing)
+System.out.println(a.equals(b)); // ❌ (primitive에는 메서드 없음)</code></pre>
+
+    <p>
+      오토박싱/언박싱은 편리하지만 반복 연산 시 성능 저하를 유발할 수 있어,  
+      <b>성능 민감한 코드에서는 기본형을 권장</b>합니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>기본형은 값, 참조형은 주소 — Stack과 Heap의 차이를 이해하라.</blockquote>
     <hr />
   </article>
 
+
+  <!-- 2. JVM 구조 -->
   <article id="q2">
-    <h3>🧩 2. JVM 메모리 구조</h3>
-    <h4>🪄 기초</h4>
-    <p><b>JVM(Java Virtual Machine)</b> 위에서 자바 프로그램이 동작하며,
-      프로그램 실행을 위한 메모리를 여러 영역으로 나눈다.</p>
+    <h3>🧩 2. JVM 구조</h3>
 
-    <h4>⚙️ 핵심</h4>
-    <table>
-      <tr><th>영역</th><th>역할</th></tr>
-      <tr><td>Method Area</td><td>클래스, static 변수 저장</td></tr>
-      <tr><td>Heap</td><td>객체 저장</td></tr>
-      <tr><td>Stack</td><td>호출된 메서드의 지역 변수/프레임</td></tr>
-      <tr><td>PC Register</td><td>현재 실행 명령어 주소</td></tr>
-      <tr><td>Native Method Stack</td><td>JNI 등 네이티브 코드 실행용</td></tr>
-    </table>
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      JVM(Java Virtual Machine)은 자바 프로그램을 OS에 독립적으로 실행하기 위한 가상머신입니다.  
+      코드가 <b>컴파일된 후 Bytecode 형태로 JVM에서 실행</b>되며,  
+      내부적으로 Class Loader, Runtime Data Area, Execution Engine으로 구성됩니다.
+    </p>
 
-    <h4>🔬 심화</h4>
+    <h4>🧠 핵심 개념</h4>
     <ul>
-      <li>Heap, PermGen, Stack 크기 튜닝 가능.</li>
-      <li>JDK8 이후 PermGen → Metaspace 변경.</li>
-      <li>Heap 내 참조 유지 객체로 메모리 누수 발생.</li>
+      <li>Class Loader: .class 파일 로드</li>
+      <li>Runtime Data Area: Stack, Heap, Method Area 등</li>
+      <li>Execution Engine: Bytecode를 기계어로 변환 (JIT 컴파일러)</li>
+      <li>Garbage Collector: Heap 관리</li>
     </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <p>
+      JVM 구조를 이해하면 <b>OutOfMemoryError</b>, <b>GC 튜닝</b>, <b>클래스 로딩 오류</b> 같은 문제를 진단하기 쉬워집니다.  
+      특히 대규모 서비스에서는 G1GC, ZGC 등 JVM 옵션 튜닝이 성능에 직접적 영향을 줍니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>JVM은 자바의 심장 — GC, 메모리, 실행 엔진을 이해해야 성능을 통제할 수 있다.</blockquote>
     <hr />
   </article>
 
+
+  <!-- 3. Stack vs Heap -->
   <article id="q3">
-    <h3>🧩 3. Garbage Collection(GC)</h3>
-    <h4>🪄 기초</h4>
-    <p><b>GC</b>는 불필요한 객체를 자동으로 제거하는 기능.</p>
-    <blockquote>자바는 <code>delete</code>가 없으며 JVM이 자동 청소.</blockquote>
+    <h3>🧩 3. Stack vs Heap</h3>
 
-    <h4>⚙️ 핵심</h4>
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      Stack은 메서드 호출 시 생성되는 지역 변수와 호출 정보를 저장하고,  
+      Heap은 <b>new로 생성한 객체</b>가 저장됩니다.  
+      Stack은 자동으로 관리되지만, Heap은 GC가 관리합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
     <ul>
-      <li>GC Root에서 도달 불가능한 객체 제거.</li>
-      <li>Young/Old 세대 구조로 관리, Young부터 자주 청소.</li>
+      <li>Stack: 지역 변수, 메서드 프레임, LIFO 구조</li>
+      <li>Heap: 객체 인스턴스 저장, GC 관리 대상</li>
+      <li>StackOverflowError: 재귀 과다 호출 시 발생</li>
     </ul>
 
-    <h4>🔬 심화</h4>
-    <ul>
-      <li><b>Stop-the-world</b>: GC 중 스레드 일시 정지.</li>
-      <li><b>Minor GC</b>/ <b>Full GC</b>: Young/Old 영역 청소 구분.</li>
-      <li><b>G1, ZGC, Shenandoah</b>: 최신 GC는 멈춤 최소화.</li>
-      <li>Full GC 잦을 시 메모리 튜닝 필요.</li>
-    </ul>
+    <h4>⚙️ 실무 적용 예시</h4>
+    <p>
+      대형 리스트나 Map 객체를 전역으로 유지할 경우 Heap을 압박하게 되고,  
+      GC Pause Time이 증가해 서버 응답이 지연될 수 있습니다.  
+      <b>불필요한 참조를 해제</b>하는 습관이 중요합니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>Stack은 일시적, Heap은 지속적 — 메모리 누수는 Heap에서 시작된다.</blockquote>
     <hr />
   </article>
 
+
+  <!-- 4. String 불변성 -->
   <article id="q4">
-    <h3>🧩 4. static 메서드와 인스턴스 메서드의 차이</h3>
-    <h4>🪄 기초</h4>
+    <h3>🧩 4. String의 불변성(Immutable)</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      자바의 <b>String</b>은 불변 객체(Immutable)입니다.  
+      즉, 한 번 생성된 문자열은 절대 변경되지 않으며,  
+      문자열을 수정하면 새로운 객체가 생성됩니다.  
+      이 특성 덕분에 <b>스레드 안전성</b>과 <b>해시 안정성</b>이 보장됩니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
     <ul>
-      <li><b>static</b>: 클래스에 속하며 객체 생성 없이 접근 가능.</li>
-      <li><b>인스턴스 메서드</b>: 객체마다 동작 다름.</li>
+      <li>String은 final class</li>
+      <li>문자 변경 시 새로운 객체 생성</li>
+      <li>String Pool로 재사용 (interning)</li>
+      <li>StringBuilder/StringBuffer: 가변 문자열 클래스</li>
     </ul>
 
-    <h4>⚙️ 핵심</h4>
-    <ul>
-      <li>static 멤버 → Method Area 저장.</li>
-      <li>인스턴스 멤버 → Heap 내부 존재.</li>
-      <li>공통 데이터나 유틸성 함수에 static 활용.</li>
-    </ul>
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>String a = "Hello";
+a += " World"; // 새로운 객체 생성
+StringBuilder sb = new StringBuilder("Hello");
+sb.append(" World"); // 기존 객체 수정</code></pre>
 
-    <h4>🔬 심화</h4>
-    <ul>
-      <li>static은 캡슐화/다형성 제한 가능.</li>
-      <li>Spring Bean 주입은 대부분 static 아님.</li>
-      <li>멀티스레드 환경에선 static 공유 동기화 필요.</li>
-    </ul>
+    <p>
+      반복 문자열 결합 시에는 반드시 <b>StringBuilder</b>를 사용해야 성능 손실을 막을 수 있습니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>String은 불변, Builder는 가변 — 반복 처리엔 StringBuilder가 필수다.</blockquote>
     <hr />
   </article>
 
+
+  <!-- 5. Wrapper Class -->
   <article id="q5">
-    <h3>🧩 5. String의 불변(Immutable)성</h3>
-    <h4>🪄 기초</h4>
-    <p>"String은 한 번 만들면 바꿀 수 없다." 예: <code>"abc" → "abcde"</code>는 새 객체 생성.</p>
+    <h3>🧩 5. Wrapper Class의 역할</h3>
 
-    <h4>⚙️ 핵심</h4>
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      Wrapper Class는 기본형을 객체로 다루기 위한 클래스입니다.  
+      예를 들어 int → Integer, double → Double과 같이 감쌉니다.  
+      이를 통해 컬렉션(List, Map 등)에서 기본형 데이터를 다룰 수 있습니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
     <ul>
-      <li>문자열 리터럴 캐싱(String Pool)</li>
-      <li>Thread-safe</li>
-      <li>보안 강화(URL, 비밀번호 등)</li>
+      <li>오토박싱(Auto-boxing): 기본형 → 객체형 자동 변환</li>
+      <li>언박싱(Unboxing): 객체형 → 기본형 자동 변환</li>
+      <li>Wrapper 클래스는 null을 가질 수 있음</li>
     </ul>
 
-    <h4>🔬 심화</h4>
-    <ul>
-      <li><code>"a" + "b"</code>는 새 객체 생성 (비효율).</li>
-      <li><b>StringBuilder / StringBuffer</b>로 개선.</li>
-      <li><b>String.intern()</b>으로 Pool 등록.</li>
-    </ul>
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>List<Integer> list = new ArrayList<>();
+list.add(1); // auto-boxing 발생
+int num = list.get(0); // unboxing 발생</code></pre>
+
+    <p>
+      반복 연산에서는 박싱/언박싱이 과도하게 일어나면 성능이 저하됩니다.  
+      성능이 중요한 구간에서는 기본형 배열 사용이 유리합니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>Wrapper는 “기본형의 객체화” — 컬렉션에서 기본형을 다루게 해준다.</blockquote>
     <hr />
   </article>
+
+
+  <!-- 6. equals() vs == -->
   <article id="q6">
     <h3>🧩 6. equals() vs ==</h3>
-    <h4>🪄 기초</h4>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      <b>==</b>은 두 객체의 <b>참조(주소)</b>가 같은지 비교하고,  
+      <b>equals()</b>는 객체의 <b>내용(값)</b>을 비교합니다.  
+      단, equals()를 재정의하지 않으면 기본적으로 ==와 동일하게 동작합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
     <ul>
-      <li><code>==</code> : 두 객체의 <b>참조(주소)</b>가 같은지 비교</li>
-      <li><code>equals()</code> : 두 객체의 <b>값</b>이 같은지 비교</li>
+      <li>== → 주소 비교</li>
+      <li>equals() → 값 비교</li>
+      <li>equals() 재정의 시 hashCode()도 반드시 재정의해야 함</li>
     </ul>
 
-    <h4>⚙️ 핵심</h4>
-    <ul>
-      <li>Object의 기본 <code>equals()</code>는 <code>==</code>와 동일하게 동작</li>
-      <li>String, Integer 등은 <code>equals()</code>를 <b>값 비교용</b>으로 재정의</li>
-    </ul>
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>String a = new String("Hi");
+String b = new String("Hi");
+System.out.println(a == b);       // false
+System.out.println(a.equals(b));  // true</code></pre>
 
-    <h4>🔬 심화</h4>
-    <ul>
-      <li><b>equals()</b>를 재정의하면 반드시 <b>hashCode()</b>도 같이 재정의</li>
-      <li>HashMap, HashSet 등은 hashCode()와 equals() 모두 사용</li>
-      <li>실무 예시: <code>record</code>는 자동으로 equals/hashCode 생성</li>
-    </ul>
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>==는 주소, equals는 값 — HashMap을 쓰려면 둘 다 맞춰야 한다.</blockquote>
     <hr />
   </article>
 
+  <!-- 7. HashMap vs Hashtable -->
   <article id="q7">
     <h3>🧩 7. HashMap vs Hashtable</h3>
-    <h4>🪄 기초</h4>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      <b>HashMap</b>은 비동기 환경에서 빠른 성능을 제공하지만 thread-safe하지 않고,  
+      <b>Hashtable</b>은 오래된 동기화 기반 컬렉션으로, 모든 메서드가 synchronized입니다.  
+      요즘은 Hashtable 대신 <b>ConcurrentHashMap</b>을 사용합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
     <ul>
-      <li><b>Hashtable</b> : 동기화(synchronized) 지원, null 불가</li>
-      <li><b>HashMap</b> : 비동기, null 허용</li>
+      <li>HashMap: 비동기, null 허용, 성능 우수</li>
+      <li>Hashtable: 동기화(synchronized) 적용, null 불가</li>
+      <li>ConcurrentHashMap: 부분 락으로 동시성 개선</li>
     </ul>
 
-    <h4>⚙️ 핵심</h4>
-    <ul>
-      <li>HashMap이 Hashtable보다 빠르고 현대적</li>
-      <li>Hashtable은 JDK 1.0 유산, 현재는 <b>ConcurrentHashMap</b>으로 대체</li>
-    </ul>
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>// Thread-safe하지 않은 HashMap
+Map&lt;String, String&gt; map = new HashMap<>();
 
-    <h4>🔬 심화</h4>
-    <ul>
-      <li>Hashtable은 전체 메서드에 synchronized → 병목 발생</li>
-      <li>ConcurrentHashMap은 세그먼트 락 or CAS 기반으로 병렬 성능 향상</li>
-      <li>HashMap은 멀티스레드 환경에서 unsafe</li>
-    </ul>
+// 안전한 ConcurrentHashMap
+Map&lt;String, String&gt; safeMap = new ConcurrentHashMap<>();</code></pre>
+
+    <p>
+      HashMap은 단일 스레드 환경에서 빠르고, Hashtable은 구식 동기화로 병목이 심합니다.  
+      실제 서비스에서는 <b>ConcurrentHashMap</b>이 사실상 표준입니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>Hashtable은 과거형, HashMap은 기본형, ConcurrentHashMap은 실무형.</blockquote>
     <hr />
   </article>
 
+
+  <!-- 8. HashMap의 시간복잡도 -->
   <article id="q8">
     <h3>🧩 8. HashMap의 시간복잡도</h3>
-    <h4>🪄 기초</h4>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      HashMap의 평균 접근 시간은 <b>O(1)</b>이지만, 해시 충돌이 많으면 <b>O(n)</b>까지 증가할 수 있습니다.  
+      JDK 8 이후로는 충돌이 일정 수준을 넘으면 연결 리스트 대신 <b>트리 구조(TreeNode)</b>로 변경되어  
+      최악의 경우도 <b>O(log n)</b>으로 보완됩니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
     <ul>
-      <li>평균적으로 <b>O(1)</b></li>
-      <li>충돌(collision) 발생 시 <b>O(n)</b></li>
+      <li>평균 접근: O(1)</li>
+      <li>충돌 발생 시: O(n)</li>
+      <li>JDK 8 이후 충돌 시 TreeNode로 변환 → O(log n)</li>
+      <li>해시 분포 품질이 성능 핵심</li>
     </ul>
 
-    <h4>⚙️ 핵심</h4>
-    <ul>
-      <li>내부적으로 <b>배열 + 연결리스트</b>로 구성</li>
-      <li>key의 hashCode()로 인덱스 계산</li>
-      <li>JDK 8 이후 충돌이 많으면 <b>트리(TreeNode)</b>로 변환</li>
-    </ul>
+    <h4>⚙️ 실무 적용 예시</h4>
+    <p>
+      해시 함수가 특정 구간에 몰리면 HashMap의 성능이 급격히 저하됩니다.  
+      따라서 <b>hashCode()를 적절히 오버라이드</b>하는 것이 중요합니다.
+    </p>
 
-    <h4>🔬 심화</h4>
-    <ul>
-      <li>TreeNode 변환 시 시간복잡도 O(log n)</li>
-      <li>적절한 해시 함수 설계로 균등 분포 유지 중요</li>
-      <li>resize 과정에서 O(n) 부하 → 초기 capacity 설정이 중요</li>
-    </ul>
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>HashMap의 성능은 해시 분포 품질에 달려 있다 — 평균 O(1), 최악 O(log n).</blockquote>
     <hr />
   </article>
 
+
+  <!-- 9. ConcurrentHashMap 원리 -->
   <article id="q9">
-    <h3>🧩 9. ConcurrentHashMap 원리</h3>
-    <h4>🪄 기초</h4>
+    <h3>🧩 9. ConcurrentHashMap의 원리</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      <b>ConcurrentHashMap</b>은 HashMap에 락을 걸어 thread-safe하게 만든 컬렉션입니다.  
+      하지만 전체 락이 아닌 <b>부분 락(Segment Lock)</b> 또는 CAS(Compare-And-Swap)를 사용해  
+      동시성 성능을 높였습니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
     <ul>
-      <li>멀티스레드 환경에서 <b>thread-safe</b>한 HashMap</li>
+      <li>JDK 7: 세그먼트 단위 락</li>
+      <li>JDK 8: CAS + synchronized 혼합 구조</li>
+      <li>읽기(read)는 락 없이 가능</li>
+      <li>쓰기(write)는 bin 단위로 락</li>
     </ul>
 
-    <h4>⚙️ 핵심</h4>
-    <ul>
-      <li>JDK 7 이전: 세그먼트 락(Segment Lock)</li>
-      <li>JDK 8 이후: CAS(Compare-And-Swap) + synchronized 블록 병용</li>
-      <li>전체 락 대신 부분 락으로 병렬성 향상</li>
-    </ul>
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>ConcurrentHashMap&lt;String, Integer&gt; map = new ConcurrentHashMap<>();
+map.put("key", 1);
+map.computeIfAbsent("key", k -> 2);</code></pre>
 
-    <h4>🔬 심화</h4>
-    <ul>
-      <li>읽기(read)는 락 없이 가능 → 높은 처리량</li>
-      <li>쓰기(write)는 bin 단위로 synchronized</li>
-      <li>key 충돌 시 bin tree 구조로 동기화 최소화</li>
-    </ul>
+    <p>
+      CAS 기반 덕분에 수십 개의 스레드가 동시에 put/get 연산을 수행해도 병목이 거의 없습니다.  
+      그러나 복합 연산(add-if-absent-then-update)은 여전히 주의가 필요합니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>ConcurrentHashMap은 “부분 락 + CAS”로 동시성과 성능을 모두 잡았다.</blockquote>
     <hr />
   </article>
 
+
+  <!-- 10. ArrayList vs LinkedList -->
   <article id="q10">
     <h3>🧩 10. ArrayList vs LinkedList</h3>
-    <h4>🪄 기초</h4>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      <b>ArrayList</b>는 내부적으로 배열을 사용하고, <b>LinkedList</b>는 노드 구조를 사용합니다.  
+      ArrayList는 인덱스 접근이 빠르지만 중간 삽입/삭제가 느리고,  
+      LinkedList는 삽입/삭제가 빠르지만 랜덤 접근이 느립니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
     <ul>
-      <li><b>ArrayList</b> : 내부적으로 배열 기반</li>
-      <li><b>LinkedList</b> : 노드 기반 (이전/다음 포인터)</li>
+      <li>ArrayList: 배열 기반, O(1) 접근 / O(n) 삽입</li>
+      <li>LinkedList: 노드 기반, O(n) 접근 / O(1) 삽입</li>
+      <li>순차 추가, 인덱스 접근 많을 땐 ArrayList 유리</li>
+      <li>Queue, Deque 용도로는 LinkedList 유리</li>
     </ul>
 
-    <h4>⚙️ 핵심</h4>
-    <ul>
-      <li>ArrayList → 탐색 빠름 (O(1)) / 삽입·삭제 느림 (O(n))</li>
-      <li>LinkedList → 탐색 느림 (O(n)) / 삽입·삭제 빠름 (O(1))</li>
-      <li>임시 저장용, 인덱스 접근 많을 때는 ArrayList 선호</li>
-    </ul>
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>List&lt;String&gt; arr = new ArrayList<>();
+List&lt;String&gt; link = new LinkedList<>();
 
-    <h4>🔬 심화</h4>
-    <ul>
-      <li>대량 데이터 처리 시 ArrayList가 캐시 효율 높음</li>
-      <li>LinkedList는 메모리 오버헤드가 큼</li>
-      <li>Queue/Deque 용도로는 LinkedList가 유리</li>
-    </ul>
+arr.add("A"); // 빠름
+link.add(0, "A"); // 삽입엔 빠름</code></pre>
+
+    <p>
+      LinkedList는 객체 생성 오버헤드가 크기 때문에 대량 데이터에서는 ArrayList가 효율적입니다.  
+      대부분의 컬렉션 API나 ORM 내부 구현은 ArrayList를 기본으로 사용합니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>ArrayList는 속도, LinkedList는 유연성 — 대부분의 경우 ArrayList가 기본이다.</blockquote>
     <hr />
   </article>
 </section>
-
