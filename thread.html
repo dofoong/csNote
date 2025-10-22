@@ -75,4 +75,228 @@ pool.submit(() -> {
     <blockquote>공유 자원 무결성을 보장하지만 락 범위가 넓으면 병목이 된다 — 실무에서는 최소 범위로 사용하거나 Lock으로 대체한다.</blockquote>
     <hr />
   </article>
+  <!-- 13. synchronized vs Lock -->
+  <article id="q13">
+    <h3>🧩 13. synchronized vs Lock</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      <b>synchronized</b>는 자바의 기본적인 락 메커니즘으로 단순하지만,  
+      범위가 크고 세밀한 제어가 어렵습니다.  
+      반면 <b>Lock</b> 인터페이스는 <b>명시적인 락 획득/해제</b>가 가능해,  
+      교착상태 회피나 타임아웃 처리처럼 세밀한 제어가 가능합니다.  
+      실무에서는 락 경쟁이 심한 구간에서 <b>ReentrantLock</b>을 자주 사용합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li><code>synchronized</code>는 자동 락 관리 (implicit lock)</li>
+      <li><code>Lock</code>은 명시적 제어 (explicit lock)</li>
+      <li>Lock은 공정성 설정, tryLock()으로 타임아웃 가능</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>Lock lock = new ReentrantLock(true); // 공정 락
+if (lock.tryLock(100, TimeUnit.MILLISECONDS)) {
+    try {
+        updateResource();
+    } finally {
+        lock.unlock();
+    }
+}</code></pre>
+
+    <p>
+      위 코드는 락을 일정 시간 안에 획득하지 못하면 넘어가게 처리한 예시입니다.  
+      이런 구조는 대규모 트래픽 환경에서 <b>락 대기 병목을 완화</b>하는 데 매우 효과적입니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>synchronized는 단순하지만 무겁고, Lock은 복잡하지만 정교하다 — 고성능 환경에선 Lock이 선호된다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 14. volatile -->
+  <article id="q14">
+    <h3>🧩 14. volatile 키워드</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      <b>volatile</b>은 변수의 값을 CPU 캐시가 아닌 메인 메모리에서 직접 읽도록 보장합니다.  
+      즉, 여러 스레드가 동시에 읽고 쓸 때 최신 값을 항상 보게 합니다.  
+      하지만 원자성은 보장하지 않기 때문에, 단순한 <b>flag 제어</b>에만 사용해야 하고  
+      복합 연산에는 <b>Atomic 클래스</b>를 써야 합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>가시성(Visibility)은 보장하지만 원자성(Atomicity)은 보장하지 않음</li>
+      <li>CPU 캐시 → 메인 메모리로 즉시 반영</li>
+      <li>JMM(Java Memory Model)에서 happens-before 관계에 영향</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>volatile boolean running = true;
+
+public void stop() {
+    running = false; // 다른 스레드에서 즉시 반영됨
+}</code></pre>
+
+    <p>
+      위 코드는 <b>플래그 기반 스레드 종료 제어</b> 예시입니다.  
+      단, <code>count++</code> 같은 복합 연산에는 여전히 race condition이 발생하므로  
+      <code>AtomicInteger.incrementAndGet()</code> 같은 원자 연산을 사용해야 합니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>volatile은 “최신값 보장”용이지, “동기화 대체”용이 아니다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 15. ExecutorService -->
+  <article id="q15">
+    <h3>🧩 15. ExecutorService</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      <b>ExecutorService</b>는 스레드를 직접 생성하지 않고 <b>스레드풀을 통해 작업을 관리</b>하게 해주는 고수준 API입니다.  
+      즉, 개발자가 스레드 생명주기를 직접 신경 쓸 필요가 없습니다.  
+      이 구조 덕분에 <b>자원 낭비 없이 대량의 비동기 작업</b>을 안정적으로 처리할 수 있습니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>스레드 생성/소멸 오버헤드를 줄이는 스레드풀 관리자</li>
+      <li><code>execute()</code> 또는 <code>submit()</code>로 Runnable/Callable 전달</li>
+      <li><code>shutdown()</code> / <code>awaitTermination()</code>으로 종료 제어</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>ExecutorService pool = Executors.newFixedThreadPool(4);
+Future<Integer> result = pool.submit(() -> heavyCalculation());
+pool.shutdown();</code></pre>
+
+    <p>
+      이렇게 하면 4개의 스레드가 고정적으로 재사용되어 CPU를 효율적으로 사용합니다.  
+      대규모 서버에서는 ThreadPoolExecutor를 커스터마이징해 큐 크기나 거부 정책을 직접 설정하기도 합니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>ExecutorService는 “스레드 관리의 표준화된 추상화” — 실무에서 Thread를 직접 생성하는 일은 거의 없다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 16. ThreadPool size -->
+  <article id="q16">
+    <h3>🧩 16. ThreadPool 크기 설정</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      스레드풀의 크기는 CPU와 작업 특성에 따라 달라집니다.  
+      <b>CPU-bound</b> 작업은 CPU 코어 수 + α 정도로 설정하고,  
+      <b>I/O-bound</b> 작업은 I/O 대기 시간이 길기 때문에 코어 수의 2~4배까지도 늘릴 수 있습니다.  
+      이는 <b>Context Switching</b> 비용과 자원 효율성의 균형을 잡기 위한 설계입니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>CPU-bound: 코어 개수 + 1</li>
+      <li>I/O-bound: 코어 × 2~4</li>
+      <li>실행 중인 작업 수와 대기 큐 크기를 함께 고려해야 함</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>int cores = Runtime.getRuntime().availableProcessors();
+ExecutorService pool = new ThreadPoolExecutor(
+    cores + 1, cores * 2,
+    60, TimeUnit.SECONDS,
+    new LinkedBlockingQueue<>(100)
+);</code></pre>
+
+    <p>
+      실제로는 TPS(초당 트랜잭션 수)나 응답 시간 SLA를 기준으로  
+      모니터링 데이터를 분석해 풀 크기를 조정하는 경우가 많습니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>ThreadPool 크기는 “CPU 코어 수 × 작업 특성”의 함수 — 무조건 많다고 좋은 게 아니다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 17. Future vs CompletableFuture -->
+  <article id="q17">
+    <h3>🧩 17. Future vs CompletableFuture</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      <b>Future</b>는 비동기 결과를 담는 객체이지만, 결과를 받을 때까지 <b>블로킹</b>됩니다.  
+      반면 <b>CompletableFuture</b>는 콜백 기반으로 <b>논블로킹</b> 처리가 가능하며,  
+      여러 비동기 작업을 체이닝하거나 병렬 실행할 수 있습니다.  
+      즉, Future는 “결과만 담는 상자”라면, CompletableFuture는 “비동기 흐름 제어 도구”입니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>Future: <code>get()</code> 호출 시 블로킹</li>
+      <li>CompletableFuture: <code>thenApply()</code>, <code>thenCombine()</code> 등으로 체이닝 가능</li>
+      <li>ForkJoinPool 기반으로 병렬 처리</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>CompletableFuture
+    .supplyAsync(() -> loadUserInfo())
+    .thenCombine(
+        CompletableFuture.supplyAsync(() -> loadOrders()),
+        (user, orders) -> mergeData(user, orders)
+    )
+    .thenAccept(System.out::println);</code></pre>
+
+    <p>
+      이런 구조는 API 서버에서 <b>여러 외부 요청을 병렬로 처리</b>해야 할 때 매우 유용합니다.  
+      블로킹 없이 응답 시간을 줄일 수 있죠.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>Future는 ‘기다리는 비동기’, CompletableFuture는 ‘흐름을 제어하는 비동기’다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 18. parallelStream -->
+  <article id="q18">
+    <h3>🧩 18. parallelStream</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      <b>parallelStream()</b>은 Stream API를 멀티코어 환경에서 자동으로 병렬 처리해주는 기능입니다.  
+      내부적으로 <b>ForkJoinPool</b>을 사용하여 데이터를 여러 청크로 나누고,  
+      각 스레드가 병렬로 작업을 수행한 뒤 결과를 병합합니다.  
+      하지만 데이터의 크기, 작업 부하, 순서 보장 여부를 고려하지 않으면 오히려 성능이 나빠질 수도 있습니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>ForkJoinPool.commonPool() 사용</li>
+      <li>CPU 코어 수만큼 자동 분할</li>
+      <li>Thread-safe하지 않은 연산에 주의</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>List<Integer> list = IntStream.range(1, 1000000).boxed().toList();
+long count = list.parallelStream()
+    .filter(i -> i % 2 == 0)
+    .count();</code></pre>
+
+    <p>
+      CPU 바운드 작업에는 효과적이지만, I/O 작업에는 별 이득이 없습니다.  
+      또한 순서가 중요한 데이터 처리에서는 <code>stream()</code>을 쓰는 게 더 안전합니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>parallelStream은 ‘자동 병렬화 도구’지만, 사용 맥락을 모르면 ‘자동 병목화 도구’가 된다.</blockquote>
+    <hr />
+  </article>
 </section>
