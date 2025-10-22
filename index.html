@@ -4,143 +4,13 @@
   <meta charset="UTF-8" />
   <title>도훈 김 - 커피챗 면접 대비 종합노트</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Pretendard', 'Segoe UI', Arial, sans-serif;
-    background: #fafafa;
-    color: #2c3e50;
-  }
-
-  /* 🔹 사이드바(nav) 고정 위치 */
-  nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 260px;
-    height: 100vh;
-    background: #f5f5f5;
-    border-right: 1px solid #ddd;
-    padding: 1.5em;
-    overflow-y: auto; /* 메뉴가 많을 때만 스크롤 */
-  }
-
-  nav h3 {
-    font-size: 1.1rem;
-    margin-bottom: 1em;
-    text-align: center;
-  }
-
-  nav a {
-    display: block;
-    margin: 0.5em 0;
-    text-decoration: none;
-    color: #2c3e50;
-    font-size: 0.95rem;
-    transition: color 0.2s;
-  }
-
-  nav a:hover {
-    color: #0078d7;
-  }
-
-  /* 🔹 본문(main)은 nav 오른쪽에 위치, 스크롤 전담 */
-  main {
-    margin-left: 260px;
-    padding: 2em;
-    min-height: 100vh;
-    overflow-y: auto;
-    background: white;
-  }
-
-  footer {
-    text-align: center;
-    font-size: 0.8rem;
-    color: #777;
-    border-top: 1px solid #eee;
-    margin-top: 3em;
-    padding-top: 1em;
-  }
-
-  /* 불러온 콘텐츠 기본 여백 복원 */
-  main section, main article, main p, main ul, main li, main h3, main h4 {
-    line-height: 1.7;
-    margin-bottom: 0.8em;
-  }
-
-  main ul {
-    margin-left: 1.5em;
-    list-style: disc;
-  }
-
-  main h3 {
-    margin-top: 1.5em;
-    margin-bottom: 0.5em;
-    color: #1e3a8a;
-  }
-
-  main h4 {
-    margin-top: 1em;
-    margin-bottom: 0.3em;
-    color: #2563eb;
-  }
-
-  main code, main pre {
-    font-family: "JetBrains Mono", Consolas, monospace;
-    background: #f4f4f4;
-    border-radius: 6px;
-    padding: 0.3em 0.6em;
-    display: inline-block;
-  }
-
-  main pre {
-    padding: 1em;
-    overflow-x: auto;
-  }
-
-  main blockquote {
-    margin: 1em 0;
-    padding: 0.8em 1em;
-    border-left: 4px solid #0078d7;
-    background: #f9f9f9;
-    font-style: italic;
-  }
-
-  /* 불러온 콘텐츠 전체 영역 여백 */
-  main section {
-    padding-bottom: 3em;
-  }
-
-  /* 모바일 대응 */
-  @media (max-width: 800px) {
-    nav {
-      position: relative;
-      width: 100%;
-      height: auto;
-      border-right: none;
-      border-bottom: 1px solid #ddd;
-    }
-
-    main {
-      margin-left: 0;
-      padding: 1.2em;
-    }
-  }
-</style>
-
+  <link rel="stylesheet" href="./css/style.css">
 </head>
 
 <body>
-  <nav>
+  <nav id="sidebar">
     <h3>📘 커피챗 면접 대비 노트</h3>
-    <a href="#" onclick="loadPage('java.html')">1️⃣ 자바 기본 & 메모리</a>
-    <a href="#" onclick="loadPage('thread.html')">2️⃣ 동시성 & 스레드</a>
-    <a href="#" onclick="loadPage('spring.html')">3️⃣ 스프링 핵심</a>
-    <a href="#" onclick="loadPage('db.html')">4️⃣ DB & JPA</a>
-    <a href="#" onclick="loadPage('network.html')">5️⃣ 네트워크 & HTTP</a>
-    <a href="#" onclick="loadPage('os.html')">6️⃣ 운영체제 & 시스템</a>
-    <a href="#" onclick="loadPage('design.html')">7️⃣ 설계 & 사고력</a>
+    <div id="menu"></div>
   </nav>
 
   <main id="content">
@@ -159,19 +29,157 @@
   </footer>
 
   <script>
-    async function loadPage(file) {
-      const content = document.getElementById('content');
-      content.innerHTML = `<p>📂 <i>${file}</i> 불러오는 중...</p>`;
-      try {
-        const res = await fetch(file);
-        if (!res.ok) throw new Error("파일을 찾을 수 없습니다.");
-        const html = await res.text();
-        content.innerHTML = html;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } catch (e) {
-        content.innerHTML = `<p style="color:red;">❌ ${e.message}</p>`;
-      }
+/* ================================
+   📘 Coffee Chat 면접 노트 스크립트
+   ================================ */
+
+const menuData = [
+  {
+    id: "java",
+    title: "1️⃣ 자바 기본 & 메모리",
+    file: "java.html",
+    questions: [
+      { id: "q1", title: "Primitive vs Reference" },
+      { id: "q2", title: "JVM 구조" },
+      { id: "q3", title: "Stack vs Heap" },
+      { id: "q4", title: "String 불변성" },
+      { id: "q5", title: "Wrapper Class" },
+      { id: "q6", title: "equals() vs ==" },
+      { id: "q7", title: "HashMap vs Hashtable" },
+      { id: "q8", title: "HashMap의 시간복잡도" },
+      { id: "q9", title: "ConcurrentHashMap 원리" },
+      { id: "q10", title: "ArrayList vs LinkedList" }
+    ]
+  },
+  {
+    id: "thread",
+    title: "2️⃣ 스레드 & 동시성",
+    file: "thread.html",
+    questions: [
+      { id: "q11", title: "Thread vs Runnable" },
+      { id: "q12", title: "synchronized 키워드" },
+      { id: "q13", title: "volatile 키워드" },
+      { id: "q14", title: "ThreadLocal" },
+      { id: "q15", title: "Deadlock" },
+      { id: "q16", title: "ExecutorService" },
+      { id: "q17", title: "Future와 CompletableFuture" },
+      { id: "q18", title: "Thread-safe 설계" }
+    ]
+  },
+  {
+    id: "spring",
+    title: "3️⃣ 스프링 핵심",
+    file: "spring.html",
+    questions: [
+      { id: "q19", title: "IoC와 DI" },
+      { id: "q20", title: "AOP 개념" },
+      { id: "q21", title: "@Transactional 동작 원리" },
+      { id: "q22", title: "빈 생명주기" },
+      { id: "q23", title: "Bean Scope" },
+      { id: "q24", title: "프록시(Proxy) 구조" },
+      { id: "q25", title: "DispatcherServlet" },
+      { id: "q26", title: "Controller vs RestController" },
+      { id: "q27", title: "Exception 처리 구조" }
+    ]
+  },
+  {
+    id: "db",
+    title: "4️⃣ DB & JPA",
+    file: "db.html",
+    questions: [
+      { id: "q28", title: "인덱스(Index)" },
+      { id: "q29", title: "인덱스의 단점" },
+      { id: "q30", title: "트랜잭션 ACID" },
+      { id: "q31", title: "N+1 문제" },
+      { id: "q32", title: "Fetch Join" },
+      { id: "q33", title: "LAZY vs EAGER" },
+      { id: "q34", title: "정규화" },
+      { id: "q35", title: "트랜잭션 필요성" },
+      { id: "q36", title: "쿼리 성능 튜닝" }
+    ]
+  },
+  {
+    id: "network",
+    title: "5️⃣ 네트워크 & HTTP",
+    file: "network.html",
+    questions: [
+      { id: "q37", title: "HTTP vs HTTPS" },
+      { id: "q38", title: "GET vs POST" },
+      { id: "q39", title: "REST API" },
+      { id: "q40", title: "Stateless의 의미" },
+      { id: "q41", title: "쿠키 vs 세션 vs JWT" },
+      { id: "q42", title: "CORS" },
+      { id: "q43", title: "HTTP 상태코드" },
+      { id: "q44", title: "로드밸런싱" }
+    ]
+  },
+  {
+    id: "os",
+    title: "6️⃣ 운영체제 & 시스템",
+    file: "os.html",
+    questions: [
+      { id: "q45", title: "프로세스 vs 스레드" },
+      { id: "q46", title: "컨텍스트 스위칭" },
+      { id: "q47", title: "메모리 구조" },
+      { id: "q48", title: "Garbage Collection" },
+      { id: "q49", title: "CPU 스케줄링" },
+      { id: "q50", title: "Deadlock" }
+    ]
+  }
+];
+
+const menu = document.getElementById("menu");
+const main = document.getElementById("content");
+
+// ===============================
+// 📂 사이드바 메뉴 렌더링
+// ===============================
+menu.innerHTML = menuData.map(sec => `
+  <div class="section" data-id="${sec.id}" data-file="${sec.file}">
+    <div class="section-title">${sec.title}</div>
+    <ul class="sublist hidden">
+      ${sec.questions.map(q => `<li class="question" data-qid="${q.id}">${q.title}</li>`).join("")}
+    </ul>
+  </div>
+`).join("");
+
+// ===============================
+// 🖱️ 메뉴 클릭 이벤트
+// ===============================
+menu.addEventListener("click", async e => {
+  const section = e.target.closest(".section");
+
+  // 1️⃣ 상위 섹션 클릭 → HTML 불러오기 + 하위 목록 토글
+  if (e.target.classList.contains("section-title")) {
+    const file = section.dataset.file;
+    const sublist = section.querySelector(".sublist");
+
+    // 다른 섹션 접기
+    document.querySelectorAll(".sublist").forEach(el => el.classList.remove("show"));
+
+    // 클릭한 섹션만 펼치기
+    sublist.classList.toggle("show");
+
+    // HTML fetch
+    const res = await fetch(file);
+    const html = await res.text();
+    main.innerHTML = html;
+    main.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // 2️⃣ 하위 문제 클릭 → 스크롤 이동
+  if (e.target.classList.contains("question")) {
+    const qid = e.target.dataset.qid;
+    const el = main.querySelector(`#${qid}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.querySelectorAll(".question").forEach(li => li.classList.remove("active"));
+      e.target.classList.add("active");
     }
-  </script>
+  }
+});
+
+</script>
+
 </body>
 </html>
