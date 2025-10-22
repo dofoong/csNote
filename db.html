@@ -1,0 +1,274 @@
+<section id="db">
+  <h2>4️⃣ DB & JPA</h2>
+
+  <!-- 28. 인덱스 -->
+  <article id="q28">
+    <h3>🧩 28. 인덱스(Index)</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      인덱스는 테이블의 데이터를 빠르게 조회하기 위한 <b>검색 최적화 구조</b>입니다.  
+      대부분 <b>B+Tree</b> 구조를 사용하며, 정렬된 형태로 데이터를 관리하기 때문에  
+      <code>WHERE</code>나 <code>JOIN</code> 조건 검색 속도를 획기적으로 높여줍니다.  
+      하지만 인덱스가 많으면 <b>INSERT / UPDATE / DELETE</b> 시 성능이 오히려 저하됩니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>검색 속도 ↑ / 쓰기 성능 ↓ (trade-off 구조)</li>
+      <li>단일 인덱스, 복합 인덱스, 커버링 인덱스 존재</li>
+      <li>인덱스는 항상 <b>조건절에 사용되는 컬럼</b>에만 걸어야 효율적</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>CREATE INDEX idx_user_email ON user(email);
+EXPLAIN SELECT * FROM user WHERE email = 'test@test.com';</code></pre>
+
+    <p>
+      복합 인덱스는 <b>왼쪽 우선(Left-most prefix)</b> 원칙을 따라야 하며,  
+      <code>(A, B)</code> 인덱스가 있다면 <code>A</code>만 검색할 때는 유효하지만 <code>B</code> 단독 검색엔 적용되지 않습니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>인덱스는 “읽기 속도를 위한 트레이드오프” — 적절한 컬럼에만 전략적으로 걸어야 한다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 29. 인덱스 단점 -->
+  <article id="q29">
+    <h3>🧩 29. 인덱스의 단점</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      인덱스는 조회엔 유리하지만, 데이터 변경 시엔 항상 인덱스 정보도 함께 갱신해야 하므로  
+      <b>쓰기 성능이 저하</b>됩니다.  
+      또, 너무 많은 인덱스는 DB 엔진이 어떤 인덱스를 쓸지 판단하는 데에도 추가 비용이 발생합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>INSERT/UPDATE/DELETE 시 인덱스도 함께 수정되어 부하 증가</li>
+      <li>디스크 공간 추가 사용</li>
+      <li>인덱스 통계 정보가 오래되면 옵티마이저 판단 오류 가능</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>ALTER TABLE orders DROP INDEX idx_old_column;</code></pre>
+
+    <p>
+      인덱스는 “자주 조회되지만 변경이 적은 컬럼”에만 걸어야 합니다.  
+      로그성 데이터나 트랜잭션 테이블에는 오히려 역효과를 냅니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>인덱스는 조회엔 약, 쓰기엔 독 — 사용 기준은 “조회 빈도와 변경 빈도”.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 30. ACID -->
+  <article id="q30">
+    <h3>🧩 30. 트랜잭션의 ACID</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      트랜잭션은 데이터베이스의 작업 단위를 의미하며,  
+      항상 <b>ACID</b> 네 가지 속성을 만족해야 합니다.  
+      즉, 모든 작업이 성공해야만 반영되고, 중간 상태가 외부에 노출되지 않습니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li><b>Atomicity</b>: 모두 성공하거나 모두 실패</li>
+      <li><b>Consistency</b>: 데이터 일관성 유지</li>
+      <li><b>Isolation</b>: 트랜잭션 간 독립성</li>
+      <li><b>Durability</b>: 커밋된 데이터는 영구 저장</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>@Transactional
+public void transfer(Account from, Account to, int amount) {
+    from.withdraw(amount);
+    to.deposit(amount);
+}</code></pre>
+
+    <p>
+      위 메서드에서 예외 발생 시 두 계좌 모두 롤백되어 데이터 불일치를 방지합니다.  
+      이는 스프링이 AOP를 통해 DB 트랜잭션을 자동 관리하기 때문입니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>ACID는 트랜잭션 신뢰성의 네 기둥 — 실패해도 데이터는 깨지지 않아야 한다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 31. N+1 문제 -->
+  <article id="q31">
+    <h3>🧩 31. N+1 문제</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      N+1 문제는 JPA에서 <b>지연 로딩(LAZY)</b> 설정 시 자주 발생합니다.  
+      즉, 한 번의 조회로 N개의 엔티티를 불러온 후,  
+      각 엔티티마다 연관 데이터를 추가로 조회하면서 <b>총 N+1번의 SQL</b>이 실행되는 현상입니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>1개의 SELECT로 N개의 엔티티를 조회</li>
+      <li>각 엔티티마다 연관 객체를 LAZY 로딩 → N번 추가 쿼리</li>
+      <li>즉, 총 N+1번 SQL 발생</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>@Query("SELECT o FROM Order o JOIN FETCH o.items")
+List&lt;Order&gt; findAllWithItems();</code></pre>
+
+    <p>
+      해결 방법은 <b>Fetch Join</b>이나 <b>EntityGraph</b>를 사용하는 것입니다.  
+      LAZY를 유지하면서도 쿼리를 한 번으로 줄일 수 있습니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>N+1 문제는 “무의식적인 반복 쿼리 폭탄” — Fetch Join이 가장 확실한 해법이다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 32. Fetch Join -->
+  <article id="q32">
+    <h3>🧩 32. Fetch Join</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      Fetch Join은 JPA에서 <b>연관된 엔티티를 한 번에 가져오기</b> 위한 JPQL 구문입니다.  
+      일반 JOIN과 달리 <b>연관 객체를 즉시 로딩</b>하여 N+1 문제를 해결합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>JPQL 구문: <code>SELECT e FROM Entity e JOIN FETCH e.related</code></li>
+      <li>Lazy Loading을 유지하면서 SQL 실행은 한 번</li>
+      <li>컬렉션 Fetch Join은 페이징 불가</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>@Query("SELECT m FROM Member m JOIN FETCH m.team")
+List&lt;Member&gt; findAllWithTeam();</code></pre>
+
+    <p>
+      Fetch Join은 “즉시 로딩(EAGER)”로 바꾸는 것보다 훨씬 효율적입니다.  
+      왜냐하면 필요한 시점에만 Join을 명시적으로 조절할 수 있기 때문입니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>Fetch Join은 “성능과 유연성의 절충점” — 필요할 때만 즉시 로딩한다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 33. LAZY vs EAGER -->
+  <article id="q33">
+    <h3>🧩 33. LAZY vs EAGER 로딩</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      <b>LAZY</b>는 연관 객체를 실제로 사용할 때 쿼리를 실행하고,  
+      <b>EAGER</b>는 엔티티 조회 시 즉시 함께 로딩합니다.  
+      EAGER는 간단하지만, 불필요한 쿼리를 많이 날려 성능 저하의 원인이 되기 때문에  
+      <b>실무에서는 항상 LAZY를 기본값</b>으로 둡니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>LAZY: 지연 로딩 (성능 우수, 제어 가능)</li>
+      <li>EAGER: 즉시 로딩 (편하지만 비효율적)</li>
+      <li>LAZY를 사용하고 필요 시 Fetch Join으로 보완</li>
+    </ul>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>LAZY는 전략, EAGER는 타협 — 실무 기본은 항상 LAZY다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 34. 정규화 -->
+  <article id="q34">
+    <h3>🧩 34. 정규화</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      정규화는 데이터 중복을 제거하고 무결성을 보장하기 위해  
+      테이블을 구조적으로 분리하는 과정입니다.  
+      하지만 너무 과도한 정규화는 조인 비용이 커지므로,  
+      분석 시스템(OLAP)에서는 일부러 비정규화를 사용하기도 합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>1NF: 컬럼 값이 원자값이어야 함</li>
+      <li>2NF: 부분 함수 종속 제거</li>
+      <li>3NF: 이행 함수 종속 제거</li>
+      <li>BCNF: 결정자 함수 종속 완전 제거</li>
+    </ul>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>정규화는 “무결성과 성능의 균형점” — 트랜잭션은 정규화, 분석은 비정규화.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 35. 트랜잭션 필요성 -->
+  <article id="q35">
+    <h3>🧩 35. 트랜잭션의 필요성</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      트랜잭션은 여러 SQL 작업을 하나의 논리 단위로 묶어,  
+      도중에 실패해도 데이터가 일관된 상태로 유지되게 합니다.  
+      즉, “모두 성공하거나 모두 실패”라는 보장을 제공합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>일관성 있는 데이터 유지</li>
+      <li>실패 시 전체 롤백</li>
+      <li>Checked 예외는 기본적으로 롤백되지 않음 → rollbackFor 사용</li>
+    </ul>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>트랜잭션은 데이터 신뢰성의 마지막 방패다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 36. 쿼리 성능 튜닝 -->
+  <article id="q36">
+    <h3>🧩 36. 쿼리 성능 튜닝</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      쿼리 튜닝의 핵심은 <b>“데이터 접근 최소화”</b>입니다.  
+      실행 계획을 통해 Full Table Scan을 피하고, 필요한 컬럼만 선택적으로 조회해야 합니다.  
+      또한 인덱스, LIMIT, 페이징 전략을 적절히 조합해야 합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>EXPLAIN으로 실행 계획 확인</li>
+      <li>필요한 컬럼만 SELECT</li>
+      <li>JOIN 순서, 조건절 인덱스 최적화</li>
+      <li>Batch Fetching, Fetch Join으로 JPA N+1 방지</li>
+    </ul>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>쿼리 튜닝의 본질은 “덜 읽기”다 — 항상 EXPLAIN으로 확인하라.</blockquote>
+    <hr />
+  </article>
+
+  <footer>
+    <p style="text-align:center; color:#888;">© 2025 도훈 김 — Coffee Chat 면접 대비 노트</p>
+  </footer>
+</section>
