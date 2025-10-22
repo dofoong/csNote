@@ -1,0 +1,334 @@
+<section id="spring">
+  <h2>3️⃣ 스프링 핵심</h2>
+
+  <!-- 19. 스프링의 철학: DI / IoC -->
+  <article id="q19">
+    <h3>🧩 19. 스프링의 핵심 철학 (DI / IoC)</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      스프링의 근본 철학은 객체를 개발자가 직접 생성하지 않고 <b>컨테이너가 대신 관리</b>하도록 하는 것입니다.  
+      이렇게 하면 객체 간 결합도가 낮아지고, 코드 수정 없이도 다양한 구현체로 교체할 수 있습니다.  
+      이 개념이 바로 <b>IoC(Inversion of Control)</b>이며, 구체적으로는 <b>DI(Dependency Injection)</b>을 통해 구현됩니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>IoC: 제어의 역전 — 객체 생성/관리 권한을 스프링 컨테이너에 위임</li>
+      <li>DI: 의존성 주입 — 필요한 객체를 외부에서 주입받음</li>
+      <li>@Component, @Service, @Repository, @Controller → 자동 빈 등록</li>
+      <li>@Autowired, @Inject, 생성자 주입으로 의존성 주입</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>@Service
+public class OrderService {
+    private final OrderRepository repo;
+
+    @Autowired
+    public OrderService(OrderRepository repo) {
+        this.repo = repo;
+    }
+}</code></pre>
+
+    <p>
+      생성자 주입은 불변성과 테스트 편의성 측면에서 가장 안전합니다.  
+      실무에서는 Lombok의 <code>@RequiredArgsConstructor</code>로 간결하게 표현하기도 합니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>스프링은 객체의 생명주기를 개발자 대신 관리하고, DI를 통해 느슨한 결합을 실현한다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 20. Bean 라이프사이클 -->
+  <article id="q20">
+    <h3>🧩 20. Bean의 라이프사이클</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      스프링 Bean은 생성 → 의존성 주입 → 초기화 → 사용 → 소멸의 과정을 거칩니다.  
+      개발자는 보통 <b>@PostConstruct</b>와 <b>@PreDestroy</b>를 이용해  
+      Bean의 초기화 및 종료 시점을 제어할 수 있습니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>스프링 컨테이너가 Bean의 전체 생명주기 관리</li>
+      <li><b>생성</b> → <b>의존성 주입</b> → <b>초기화</b> → <b>사용</b> → <b>소멸</b></li>
+      <li>BeanPostProcessor로 초기화 전/후 커스텀 로직 가능</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>@Component
+public class CacheInitializer {
+    @PostConstruct
+    public void init() { loadCache(); }
+
+    @PreDestroy
+    public void destroy() { clearCache(); }
+}</code></pre>
+
+    <p>
+      캐시, 커넥션 풀, 리소스 초기화 같은 작업은 Bean 라이프사이클 훅에 등록해 관리하는 게 안전합니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>스프링이 Bean의 생애주기를 대신 관리하고, 개발자는 핵심 로직에만 집중한다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 21. @Component / @Service / @Repository -->
+  <article id="q21">
+    <h3>🧩 21. @Component / @Service / @Repository 차이</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      세 애노테이션 모두 스프링이 Bean으로 등록하기 위한 컴포넌트 스캔 대상이지만,  
+      <b>계층별 역할</b>을 구분하기 위해 사용합니다.  
+      @Repository는 DB 예외를 스프링 예외로 변환하고,  
+      @Service는 트랜잭션의 경계가 되는 비즈니스 로직 계층에 사용됩니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>@Component: 기본 Bean 등록용</li>
+      <li>@Service: 비즈니스 로직 계층</li>
+      <li>@Repository: DB 계층, DataAccessException 변환 기능 포함</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>@Repository
+public interface UserRepository extends JpaRepository&lt;User, Long&gt; { }</code></pre>
+
+    <p>
+      계층별 명시적 구분은 유지보수성과 AOP(로깅, 트랜잭션 적용) 시점을 명확히 구분하는 데 중요합니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>@Component는 기본, @Service는 로직, @Repository는 데이터 — 구분은 기능적 목적보단 역할 명시다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 22. @Autowired vs @Qualifier -->
+  <article id="q22">
+    <h3>🧩 22. @Autowired vs @Qualifier</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      <b>@Autowired</b>는 타입 기준으로 Bean을 주입하지만,  
+      동일 타입이 여러 개면 스프링이 어떤 Bean을 써야 할지 모릅니다.  
+      이때 <b>@Qualifier</b>를 함께 사용해 이름으로 구분하거나,  
+      <b>@Primary</b>를 통해 우선순위를 지정할 수 있습니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>@Autowired → 타입 기준 주입</li>
+      <li>@Qualifier → 이름 기준 주입</li>
+      <li>@Primary → 기본 Bean 지정</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>@Service
+public class PaymentService {
+    @Autowired
+    @Qualifier("creditPayment")
+    private PaymentProcessor processor;
+}</code></pre>
+
+    <p>
+      이런 구조를 통해 한 인터페이스에 여러 구현체를 두고, 런타임 환경에 따라 주입 전략을 바꿀 수 있습니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>@Autowired는 타입, @Qualifier는 이름, @Primary는 기본값을 지정한다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 23. @Transactional -->
+  <article id="q23">
+    <h3>🧩 23. @Transactional</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      <b>@Transactional</b>은 메서드 실행을 하나의 트랜잭션으로 묶어  
+      모든 작업이 성공하면 커밋, 실패하면 롤백하도록 합니다.  
+      내부적으로는 <b>AOP 프록시</b>로 구현되어, 메서드 실행 전후로 트랜잭션을 제어합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>트랜잭션 경계 선언</li>
+      <li>실패 시 롤백, 성공 시 커밋</li>
+      <li>Propagation, Isolation 레벨 설정 가능</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>@Transactional
+public void createOrder(Order order) {
+    orderRepo.save(order);
+    stockRepo.decrease(order.getProductId());
+}</code></pre>
+
+    <p>
+      기본적으로 RuntimeException 발생 시 롤백됩니다.  
+      Checked 예외까지 포함하려면 <code>@Transactional(rollbackFor = Exception.class)</code>로 명시해야 합니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>@Transactional은 데이터 일관성의 핵심 — 예외 상황에서 안전하게 롤백시켜준다.</blockquote>
+    <hr />
+  </article>
+  <article id="q24">
+    <h3>🧩 24. 트랜잭션 격리 수준 (Isolation Level)</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      트랜잭션 격리 수준은 여러 트랜잭션이 동시에 실행될 때  
+      데이터가 서로에게 <b>얼마나 영향을 미치지 않도록 할 것인지</b>를 결정하는 설정입니다.  
+      격리 수준이 높을수록 데이터 일관성은 좋아지지만 성능은 떨어집니다.  
+      대부분의 서비스에서는 <b>READ COMMITTED</b>를 기본으로 사용합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <table>
+      <tr><th>레벨</th><th>특징</th><th>문제 발생</th></tr>
+      <tr><td>READ UNCOMMITTED</td><td>커밋 안 된 데이터 읽기 허용</td><td>Dirty Read</td></tr>
+      <tr><td>READ COMMITTED</td><td>커밋된 데이터만 읽기</td><td>Non-repeatable Read</td></tr>
+      <tr><td>REPEATABLE READ</td><td>같은 쿼리 결과 일관성 유지</td><td>Phantom Read</td></tr>
+      <tr><td>SERIALIZABLE</td><td>가장 엄격, 순차 실행 수준</td><td>성능 저하</td></tr>
+    </table>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>@Transactional(isolation = Isolation.REPEATABLE_READ)
+public void updateAccount() { ... }</code></pre>
+
+    <p>
+      대부분의 RDBMS는 기본적으로 READ COMMITTED를 사용하며,  
+      MySQL의 InnoDB는 REPEATABLE READ가 기본입니다.  
+      대규모 트랜잭션 시스템에서는 성능 병목을 막기 위해  
+      “낮은 격리 수준 + 보상 로직” 패턴을 사용하는 경우도 있습니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>격리 수준은 “일관성과 성능의 트레이드오프” — 현실적으로 READ COMMITTED가 가장 균형 잡혀 있다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 25. Bean Scope -->
+  <article id="q25">
+    <h3>🧩 25. Bean Scope</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      Bean Scope는 <b>스프링이 Bean 인스턴스를 얼마나 자주 생성하고 공유할지</b>를 결정하는 설정입니다.  
+      기본은 <b>Singleton</b>으로, 애플리케이션 내에 단 하나의 인스턴스만 존재합니다.  
+      하지만 요청마다 새로운 Bean이 필요할 때는 Prototype, Request Scope 등을 사용합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>Singleton (기본): 컨테이너당 1개 인스턴스</li>
+      <li>Prototype: 요청 시마다 새로운 인스턴스</li>
+      <li>Request / Session: 웹 요청 단위, 세션 단위</li>
+      <li>Application: ServletContext 단위</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>@Scope("prototype")
+@Component
+public class TemporaryBean { }</code></pre>
+
+    <p>
+      Request Scope Bean은 컨트롤러에서 HTTP 요청당 데이터를 저장하는 용도로 많이 사용됩니다.  
+      단, Singleton Bean이 Request Bean을 주입받으면 라이프사이클이 달라 오류가 나므로  
+      <b>ObjectProvider</b>나 <b>proxyMode</b>를 사용해야 합니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>Bean Scope는 “객체 생명주기의 단위” — Singleton이 기본, 웹은 Request/Session으로 확장된다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 26. AOP -->
+  <article id="q26">
+    <h3>🧩 26. AOP (Aspect Oriented Programming)</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      AOP는 <b>공통 관심사(로깅, 트랜잭션, 보안 등)</b>를 핵심 로직에서 분리해  
+      코드 중복 없이 관리하기 위한 기술입니다.  
+      스프링에서는 프록시 기반으로 메서드 실행 전후에 공통 로직을 자동 삽입합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>JoinPoint: AOP가 적용될 수 있는 지점</li>
+      <li>Pointcut: 실제 적용할 지점 선택 기준</li>
+      <li>Advice: 실행 전/후/예외 시 수행할 로직</li>
+      <li>Aspect: Pointcut + Advice 묶음</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>@Aspect
+@Component
+public class LogAspect {
+    @Before("execution(* com.example..*(..))")
+    public void logBefore(JoinPoint jp) {
+        System.out.println("Executing: " + jp.getSignature());
+    }
+}</code></pre>
+
+    <p>
+      이런 구조를 통해 서비스 로직에는 집중하고, 로깅이나 보안 처리는 AOP로 분리해 유지보수성을 높일 수 있습니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>AOP는 “공통 로직 분리 도구” — 핵심 로직은 깨끗하게, 횡단 관심사는 외부에서 관리한다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 27. DI의 장점 -->
+  <article id="q27">
+    <h3>🧩 27. DI(Dependency Injection)의 장점</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      DI는 객체 간 의존성을 외부에서 주입함으로써 <b>결합도를 낮추고 테스트를 용이하게</b> 합니다.  
+      구현체를 바꿔도 클라이언트 코드 수정이 필요 없기 때문에 확장성이 뛰어납니다.  
+      이는 <b>DIP(Dependency Inversion Principle)</b>을 실현하는 핵심 기법입니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>결합도 감소 (Loose Coupling)</li>
+      <li>테스트 편의성 (Mock 주입 가능)</li>
+      <li>확장성 증가 (전략 패턴과 궁합 좋음)</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>public class NotificationService {
+    private final MessageSender sender;
+    public NotificationService(MessageSender sender) { this.sender = sender; }
+}</code></pre>
+
+    <p>
+      위 구조에서 MessageSender를 Email, SMS 등으로 쉽게 교체할 수 있습니다.  
+      이는 스프링이 의존성 주입을 자동 처리하기 때문에 가능한 일입니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>DI는 “유연한 코드 구조의 핵심” — 객체 간 결합도를 낮추고 테스트 친화적인 시스템을 만든다.</blockquote>
+    <hr />
+  </article>
+
+  <!-- 나머지 24~27번도 동일한 포맷으로 이어짐 -->
+</section>
