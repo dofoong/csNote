@@ -1,0 +1,122 @@
+<section id="java-basics">
+  <h2>1️⃣ 자바 기본 & 메모리 구조</h2>
+
+  <article id="q1">
+    <h3>🧩 1. Stack과 Heap의 차이</h3>
+    <h4>🪄 기초</h4>
+    <ul>
+      <li><b>Stack</b>: 함수 호출 시 지역 변수나 매개변수를 저장하는 임시 공간.</li>
+      <li><b>Heap</b>: <code>new</code>로 생성된 객체가 저장되는 공간.</li>
+    </ul>
+    <blockquote>Stack은 빠르지만 휘발성, Heap은 느리지만 오래 저장.</blockquote>
+
+    <h4>⚙️ 핵심</h4>
+    <ul>
+      <li>Stack은 <b>LIFO</b> 구조로 메서드 호출마다 프레임 생성/소멸.</li>
+      <li>Heap은 <b>GC(Garbage Collector)</b>가 관리하며 참조 끊기면 제거.</li>
+    </ul>
+
+    <h4>🔬 심화</h4>
+    <ul>
+      <li><b>StackOverflowError</b> → 재귀 호출 과다 시 발생.</li>
+      <li><b>OutOfMemoryError</b> → Heap 객체 과다 생성 시 발생.</li>
+      <li>실무 팁: 대량 객체는 지역변수 참조를 빨리 끊어 GC 유도.</li>
+    </ul>
+    <hr />
+  </article>
+
+  <article id="q2">
+    <h3>🧩 2. JVM 메모리 구조</h3>
+    <h4>🪄 기초</h4>
+    <p><b>JVM(Java Virtual Machine)</b> 위에서 자바 프로그램이 동작하며,
+      프로그램 실행을 위한 메모리를 여러 영역으로 나눈다.</p>
+
+    <h4>⚙️ 핵심</h4>
+    <table>
+      <tr><th>영역</th><th>역할</th></tr>
+      <tr><td>Method Area</td><td>클래스, static 변수 저장</td></tr>
+      <tr><td>Heap</td><td>객체 저장</td></tr>
+      <tr><td>Stack</td><td>호출된 메서드의 지역 변수/프레임</td></tr>
+      <tr><td>PC Register</td><td>현재 실행 명령어 주소</td></tr>
+      <tr><td>Native Method Stack</td><td>JNI 등 네이티브 코드 실행용</td></tr>
+    </table>
+
+    <h4>🔬 심화</h4>
+    <ul>
+      <li>Heap, PermGen, Stack 크기 튜닝 가능.</li>
+      <li>JDK8 이후 PermGen → Metaspace 변경.</li>
+      <li>Heap 내 참조 유지 객체로 메모리 누수 발생.</li>
+    </ul>
+    <hr />
+  </article>
+
+  <article id="q3">
+    <h3>🧩 3. Garbage Collection(GC)</h3>
+    <h4>🪄 기초</h4>
+    <p><b>GC</b>는 불필요한 객체를 자동으로 제거하는 기능.</p>
+    <blockquote>자바는 <code>delete</code>가 없으며 JVM이 자동 청소.</blockquote>
+
+    <h4>⚙️ 핵심</h4>
+    <ul>
+      <li>GC Root에서 도달 불가능한 객체 제거.</li>
+      <li>Young/Old 세대 구조로 관리, Young부터 자주 청소.</li>
+    </ul>
+
+    <h4>🔬 심화</h4>
+    <ul>
+      <li><b>Stop-the-world</b>: GC 중 스레드 일시 정지.</li>
+      <li><b>Minor GC</b>/ <b>Full GC</b>: Young/Old 영역 청소 구분.</li>
+      <li><b>G1, ZGC, Shenandoah</b>: 최신 GC는 멈춤 최소화.</li>
+      <li>Full GC 잦을 시 메모리 튜닝 필요.</li>
+    </ul>
+    <hr />
+  </article>
+
+  <article id="q4">
+    <h3>🧩 4. static 메서드와 인스턴스 메서드의 차이</h3>
+    <h4>🪄 기초</h4>
+    <ul>
+      <li><b>static</b>: 클래스에 속하며 객체 생성 없이 접근 가능.</li>
+      <li><b>인스턴스 메서드</b>: 객체마다 동작 다름.</li>
+    </ul>
+
+    <h4>⚙️ 핵심</h4>
+    <ul>
+      <li>static 멤버 → Method Area 저장.</li>
+      <li>인스턴스 멤버 → Heap 내부 존재.</li>
+      <li>공통 데이터나 유틸성 함수에 static 활용.</li>
+    </ul>
+
+    <h4>🔬 심화</h4>
+    <ul>
+      <li>static은 캡슐화/다형성 제한 가능.</li>
+      <li>Spring Bean 주입은 대부분 static 아님.</li>
+      <li>멀티스레드 환경에선 static 공유 동기화 필요.</li>
+    </ul>
+    <hr />
+  </article>
+
+  <article id="q5">
+    <h3>🧩 5. String의 불변(Immutable)성</h3>
+    <h4>🪄 기초</h4>
+    <p>"String은 한 번 만들면 바꿀 수 없다." 예: <code>"abc" → "abcde"</code>는 새 객체 생성.</p>
+
+    <h4>⚙️ 핵심</h4>
+    <ul>
+      <li>문자열 리터럴 캐싱(String Pool)</li>
+      <li>Thread-safe</li>
+      <li>보안 강화(URL, 비밀번호 등)</li>
+    </ul>
+
+    <h4>🔬 심화</h4>
+    <ul>
+      <li><code>"a" + "b"</code>는 새 객체 생성 (비효율).</li>
+      <li><b>StringBuilder / StringBuffer</b>로 개선.</li>
+      <li><b>String.intern()</b>으로 Pool 등록.</li>
+    </ul>
+    <hr />
+  </article>
+
+  <!-- 6~10번 문항도 같은 구조로 이어붙이면 완성 -->
+</section>
+

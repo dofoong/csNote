@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>도훈 김 - 커피챗 면접 대비 종합노트</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Pretendard', 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: row;
+      min-height: 100vh;
+      background: #fafafa;
+      color: #2c3e50;
+    }
+    nav {
+      width: 260px;
+      background: #f5f5f5;
+      border-right: 1px solid #ddd;
+      padding: 1.5em;
+      overflow-y: auto;
+    }
+    nav h3 {
+      font-size: 1.1rem;
+      margin-top: 0;
+      color: #1e1e1e;
+      text-align: center;
+    }
+    nav a {
+      display: block;
+      margin: 0.5em 0;
+      text-decoration: none;
+      color: #2c3e50;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+    nav a:hover {
+      color: #0078d7;
+    }
+    main {
+      flex: 1;
+      padding: 2em;
+      overflow-y: auto;
+      background: white;
+    }
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #777;
+      border-top: 1px solid #eee;
+      margin-top: 3em;
+      padding-top: 1em;
+    }
+
+    /* 모바일 대응 */
+    @media (max-width: 800px) {
+      body { flex-direction: column; }
+      nav { width: 100%; border-right: none; border-bottom: 1px solid #ddd; }
+      main { padding: 1.2em; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <h3>📘 커피챗 면접 대비 노트</h3>
+    <a href="#" onclick="loadPage('java.html')">1️⃣ 자바 기본 & 메모리</a>
+    <a href="#" onclick="loadPage('thread.html')">2️⃣ 동시성 & 스레드</a>
+    <a href="#" onclick="loadPage('spring.html')">3️⃣ 스프링 핵심</a>
+    <a href="#" onclick="loadPage('db.html')">4️⃣ DB & JPA</a>
+    <a href="#" onclick="loadPage('network.html')">5️⃣ 네트워크 & HTTP</a>
+    <a href="#" onclick="loadPage('os.html')">6️⃣ 운영체제 & 시스템</a>
+    <a href="#" onclick="loadPage('design.html')">7️⃣ 설계 & 사고력</a>
+  </nav>
+
+  <main id="content">
+    <h2>👋 도훈 김 - 커피챗 면접 대비 종합노트</h2>
+    <p>이 문서는 자바, 스프링, JPA, 네트워크, 운영체제, 시스템 설계 등
+       커피챗(실무 면접)을 대비하기 위한 50문항 정리본입니다.</p>
+    <ul>
+      <li>왼쪽 메뉴에서 파트를 클릭하면 해당 섹션이 오른쪽에 표시됩니다.</li>
+      <li>GitHub Pages 환경에서 fetch로 각 HTML을 로드합니다.</li>
+    </ul>
+    <hr />
+  </main>
+
+  <footer>
+    © 2025 도훈 김 — Coffee Chat Technical Interview Notes
+  </footer>
+
+  <script>
+    async function loadPage(file) {
+      const content = document.getElementById('content');
+      content.innerHTML = `<p>📂 <i>${file}</i> 불러오는 중...</p>`;
+      try {
+        const res = await fetch(file);
+        if (!res.ok) throw new Error("파일을 찾을 수 없습니다.");
+        const html = await res.text();
+        content.innerHTML = html;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (e) {
+        content.innerHTML = `<p style="color:red;">❌ ${e.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
