@@ -1,0 +1,270 @@
+<section id="network">
+  <h2>5️⃣ 네트워크 & HTTP</h2>
+
+  <!-- 37. HTTP와 HTTPS -->
+  <article id="q37">
+    <h3>🧩 37. HTTP vs HTTPS</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      HTTP는 평문(plain text) 통신이므로 중간에서 패킷을 가로채면 내용을 그대로 볼 수 있습니다.  
+      HTTPS는 SSL/TLS를 사용해 <b>데이터를 암호화</b>하여 송수신하므로,  
+      네트워크 중간자 공격(MITM)에 안전합니다.  
+      즉, HTTPS는 “보안 계층이 추가된 HTTP”입니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>HTTP: 비암호화, 80포트</li>
+      <li>HTTPS: SSL/TLS 암호화, 443포트</li>
+      <li>대칭키 + 비대칭키 혼합 방식 (세션키 교환 후 대칭키 사용)</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>// Nginx 설정 예시
+server {
+    listen 443 ssl;
+    ssl_certificate /etc/ssl/fullchain.pem;
+    ssl_certificate_key /etc/ssl/privkey.pem;
+}</code></pre>
+
+    <p>
+      실무에서는 Let’s Encrypt를 이용한 무료 인증서 자동 갱신이 일반적입니다.  
+      HTTPS는 SEO, 브라우저 신뢰도, API 호출에서도 필수입니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>HTTP는 열려 있고, HTTPS는 잠겨 있다 — 현대 웹에선 HTTPS는 기본값이다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 38. GET vs POST -->
+  <article id="q38">
+    <h3>🧩 38. GET vs POST</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      <b>GET</b>은 데이터를 URL에 포함시켜 서버에 요청하는 방식으로,  
+      주로 조회(SELECT) 용도로 사용됩니다.  
+      반면 <b>POST</b>는 Request Body에 데이터를 담아 전송하며,  
+      리소스 생성/변경 시에 사용합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>GET: 멱등(idempotent), 캐싱 가능, URL에 데이터 노출</li>
+      <li>POST: 비멱등, 캐싱 불가, Body로 데이터 전달</li>
+      <li>보안보단 “의도” 구분이 핵심</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>// RESTful API 설계 원칙 예시
+GET /users/1          → 사용자 조회
+POST /users           → 사용자 생성
+PUT /users/1          → 사용자 수정
+DELETE /users/1       → 사용자 삭제</code></pre>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>GET은 요청, POST는 전달 — “무엇을 하는 요청인지”를 표현한다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 39. REST API -->
+  <article id="q39">
+    <h3>🧩 39. REST API의 개념</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      REST는 <b>Representational State Transfer</b>의 약자로,  
+      자원을 URL로 표현하고 HTTP 메서드(GET, POST, PUT, DELETE 등)로 조작하는 방식입니다.  
+      무상태(Stateless) 구조라 서버가 클라이언트 세션을 저장하지 않기 때문에  
+      <b>확장성(Scalability)</b>이 뛰어납니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>자원(Resource): URI로 식별</li>
+      <li>행위(Method): HTTP 메서드로 표현</li>
+      <li>표현(Representation): JSON, XML 등으로 전달</li>
+      <li>Stateless: 요청 간 상태를 서버에 저장하지 않음</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>GET /products/1 → 제품 상세 조회
+POST /orders    → 주문 생성
+DELETE /orders/5 → 주문 삭제</code></pre>
+
+    <p>
+      REST는 단순하지만 표준이 아니기 때문에, 팀 내 <b>URI 네이밍 규칙</b> 일관성이 중요합니다.  
+      Swagger 같은 도구로 문서화하는 것도 필수입니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>REST는 “HTTP를 설계 철학으로 확장한 규약” — 단순함이 곧 확장성이다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 40. Stateless의 의미 -->
+  <article id="q40">
+    <h3>🧩 40. Stateless의 의미</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      Stateless란 <b>서버가 클라이언트 상태를 보관하지 않는다</b>는 뜻입니다.  
+      즉, 각 요청은 완전히 독립적이며, 이전 요청에 의존하지 않습니다.  
+      이 구조는 <b>서버 확장(스케일 아웃)</b>이 용이하고, 세션 복제 없이도 로드밸런싱이 가능합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>요청마다 필요한 모든 정보 포함</li>
+      <li>서버는 세션 상태 저장 X</li>
+      <li>JWT, API Key 등 클라이언트 기반 인증 구조 필요</li>
+    </ul>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>Stateless는 “확장성의 열쇠” — 서버는 기억하지 않는다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 41. 쿠키 vs 세션 vs JWT -->
+  <article id="q41">
+    <h3>🧩 41. 쿠키 vs 세션 vs JWT</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      <b>쿠키</b>는 클라이언트에 저장되는 작은 데이터 조각,  
+      <b>세션</b>은 서버가 사용자의 상태를 관리하기 위한 저장소,  
+      <b>JWT</b>는 인증 정보를 토큰 형태로 인코딩하여 클라이언트가 직접 보관하는 방식입니다.  
+      즉, JWT는 서버 부하 없이 인증을 처리할 수 있어 <b>Stateless 인증</b>에 적합합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>쿠키: 클라이언트에 저장되는 key-value 데이터</li>
+      <li>세션: 서버 저장 방식 (세션 ID로 식별)</li>
+      <li>JWT: JSON Web Token, 자체 검증 가능한 토큰 기반 인증</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</code></pre>
+
+    <p>
+      JWT는 서버 확장 시 세션 복제가 필요 없고,  
+      마이크로서비스 환경에서 인증 서버와 API 서버를 분리하기 쉽습니다.  
+      단, 토큰 탈취 시 즉시 폐기 불가하므로 만료시간 관리가 중요합니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>쿠키는 저장, 세션은 기억, JWT는 증명 — 현대 인증의 기본은 JWT다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 42. CORS -->
+  <article id="q42">
+    <h3>🧩 42. CORS (Cross-Origin Resource Sharing)</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      CORS는 다른 출처(origin)의 리소스 요청을 허용하기 위한 <b>브라우저 보안 정책</b>입니다.  
+      기본적으로 브라우저는 다른 도메인에서 오는 요청을 차단하지만,  
+      서버에서 <b>Access-Control-Allow-Origin</b> 헤더를 설정하면 허용할 수 있습니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>보안 목적의 Same-Origin Policy 예외 규칙</li>
+      <li>서버가 허용 헤더를 명시적으로 반환해야 함</li>
+      <li>Preflight 요청(OPTIONS 메서드)으로 검증</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>@Bean
+public WebMvcConfigurer corsConfigurer() {
+    return new WebMvcConfigurer() {
+        @Override
+        public void addCorsMappings(CorsRegistry registry) {
+            registry.addMapping("/**")
+                    .allowedOrigins("https://myapp.com")
+                    .allowedMethods("GET","POST");
+        }
+    };
+}</code></pre>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>CORS는 “서버가 허락해야 가능한 타 도메인 요청” — 보안과 유연성의 균형 설정이 핵심이다.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 43. HTTP 상태코드 -->
+  <article id="q43">
+    <h3>🧩 43. HTTP 상태코드</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      HTTP 상태코드는 클라이언트 요청의 결과를 숫자로 표현한 것입니다.  
+      API 설계에서는 상태코드로 <b>비즈니스 의도</b>를 명확히 전달하는 것이 중요합니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>2xx: 성공 (200 OK, 201 Created, 204 No Content)</li>
+      <li>3xx: 리다이렉션 (301, 302, 304)</li>
+      <li>4xx: 클라이언트 오류 (400, 401, 403, 404)</li>
+      <li>5xx: 서버 오류 (500, 502, 503)</li>
+    </ul>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>HTTP 코드로 의도를 드러내라 — 200은 성공, 400은 요청 오류, 500은 서버 문제.</blockquote>
+    <hr />
+  </article>
+
+
+  <!-- 44. 로드밸런싱 -->
+  <article id="q44">
+    <h3>🧩 44. 로드밸런싱 (Load Balancing)</h3>
+
+    <h4>💬 면접 답변 예시</h4>
+    <p>
+      로드밸런싱은 다수의 서버에 트래픽을 분산시켜  
+      <b>부하를 고르게 나누고, 장애 시 자동 복구</b>를 돕는 기술입니다.  
+      일반적으로 L4(Layer 4)나 L7(Layer 7) 수준에서 구현됩니다.
+    </p>
+
+    <h4>🧠 핵심 개념</h4>
+    <ul>
+      <li>L4: IP, Port 기반 분산 (TCP 수준)</li>
+      <li>L7: URL, Header 기반 분산 (HTTP 수준)</li>
+      <li>헬스체크(Health Check)로 장애 감지 및 트래픽 재분배</li>
+    </ul>
+
+    <h4>⚙️ 실무 적용 예시</h4>
+    <pre><code>// Nginx 예시
+upstream app {
+    server app1.example.com;
+    server app2.example.com;
+}
+server {
+    location / { proxy_pass http://app; }
+}</code></pre>
+
+    <p>
+      대규모 시스템에서는 AWS ELB, GCP Load Balancer 등을 활용하며,  
+      쿠키 기반 세션 스티키(sticky session)도 종종 함께 설정합니다.
+    </p>
+
+    <h4>🪄 한 줄 요약</h4>
+    <blockquote>로드밸런싱은 “트래픽의 교통경찰” — 장애를 막고, 부하를 고르게 나눈다.</blockquote>
+    <hr />
+  </article>
+
+  <footer>
+    <p style="text-align:center; color:#888;">© 2025 도훈 김 — Coffee Chat 면접 대비 노트</p>
+  </footer>
+</section>
