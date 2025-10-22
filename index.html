@@ -63,6 +63,55 @@
     padding-top: 1em;
   }
 
+  /* 불러온 콘텐츠 기본 여백 복원 */
+  main section, main article, main p, main ul, main li, main h3, main h4 {
+    line-height: 1.7;
+    margin-bottom: 0.8em;
+  }
+
+  main ul {
+    margin-left: 1.5em;
+    list-style: disc;
+  }
+
+  main h3 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    color: #1e3a8a;
+  }
+
+  main h4 {
+    margin-top: 1em;
+    margin-bottom: 0.3em;
+    color: #2563eb;
+  }
+
+  main code, main pre {
+    font-family: "JetBrains Mono", Consolas, monospace;
+    background: #f4f4f4;
+    border-radius: 6px;
+    padding: 0.3em 0.6em;
+    display: inline-block;
+  }
+
+  main pre {
+    padding: 1em;
+    overflow-x: auto;
+  }
+
+  main blockquote {
+    margin: 1em 0;
+    padding: 0.8em 1em;
+    border-left: 4px solid #0078d7;
+    background: #f9f9f9;
+    font-style: italic;
+  }
+
+  /* 불러온 콘텐츠 전체 영역 여백 */
+  main section {
+    padding-bottom: 3em;
+  }
+
   /* 모바일 대응 */
   @media (max-width: 800px) {
     nav {
