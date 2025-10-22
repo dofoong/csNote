@@ -116,7 +116,121 @@
     </ul>
     <hr />
   </article>
+  <article id="q6">
+    <h3>🧩 6. equals() vs ==</h3>
+    <h4>🪄 기초</h4>
+    <ul>
+      <li><code>==</code> : 두 객체의 <b>참조(주소)</b>가 같은지 비교</li>
+      <li><code>equals()</code> : 두 객체의 <b>값</b>이 같은지 비교</li>
+    </ul>
 
-  <!-- 6~10번 문항도 같은 구조로 이어붙이면 완성 -->
+    <h4>⚙️ 핵심</h4>
+    <ul>
+      <li>Object의 기본 <code>equals()</code>는 <code>==</code>와 동일하게 동작</li>
+      <li>String, Integer 등은 <code>equals()</code>를 <b>값 비교용</b>으로 재정의</li>
+    </ul>
+
+    <h4>🔬 심화</h4>
+    <ul>
+      <li><b>equals()</b>를 재정의하면 반드시 <b>hashCode()</b>도 같이 재정의</li>
+      <li>HashMap, HashSet 등은 hashCode()와 equals() 모두 사용</li>
+      <li>실무 예시: <code>record</code>는 자동으로 equals/hashCode 생성</li>
+    </ul>
+    <hr />
+  </article>
+
+  <article id="q7">
+    <h3>🧩 7. HashMap vs Hashtable</h3>
+    <h4>🪄 기초</h4>
+    <ul>
+      <li><b>Hashtable</b> : 동기화(synchronized) 지원, null 불가</li>
+      <li><b>HashMap</b> : 비동기, null 허용</li>
+    </ul>
+
+    <h4>⚙️ 핵심</h4>
+    <ul>
+      <li>HashMap이 Hashtable보다 빠르고 현대적</li>
+      <li>Hashtable은 JDK 1.0 유산, 현재는 <b>ConcurrentHashMap</b>으로 대체</li>
+    </ul>
+
+    <h4>🔬 심화</h4>
+    <ul>
+      <li>Hashtable은 전체 메서드에 synchronized → 병목 발생</li>
+      <li>ConcurrentHashMap은 세그먼트 락 or CAS 기반으로 병렬 성능 향상</li>
+      <li>HashMap은 멀티스레드 환경에서 unsafe</li>
+    </ul>
+    <hr />
+  </article>
+
+  <article id="q8">
+    <h3>🧩 8. HashMap의 시간복잡도</h3>
+    <h4>🪄 기초</h4>
+    <ul>
+      <li>평균적으로 <b>O(1)</b></li>
+      <li>충돌(collision) 발생 시 <b>O(n)</b></li>
+    </ul>
+
+    <h4>⚙️ 핵심</h4>
+    <ul>
+      <li>내부적으로 <b>배열 + 연결리스트</b>로 구성</li>
+      <li>key의 hashCode()로 인덱스 계산</li>
+      <li>JDK 8 이후 충돌이 많으면 <b>트리(TreeNode)</b>로 변환</li>
+    </ul>
+
+    <h4>🔬 심화</h4>
+    <ul>
+      <li>TreeNode 변환 시 시간복잡도 O(log n)</li>
+      <li>적절한 해시 함수 설계로 균등 분포 유지 중요</li>
+      <li>resize 과정에서 O(n) 부하 → 초기 capacity 설정이 중요</li>
+    </ul>
+    <hr />
+  </article>
+
+  <article id="q9">
+    <h3>🧩 9. ConcurrentHashMap 원리</h3>
+    <h4>🪄 기초</h4>
+    <ul>
+      <li>멀티스레드 환경에서 <b>thread-safe</b>한 HashMap</li>
+    </ul>
+
+    <h4>⚙️ 핵심</h4>
+    <ul>
+      <li>JDK 7 이전: 세그먼트 락(Segment Lock)</li>
+      <li>JDK 8 이후: CAS(Compare-And-Swap) + synchronized 블록 병용</li>
+      <li>전체 락 대신 부분 락으로 병렬성 향상</li>
+    </ul>
+
+    <h4>🔬 심화</h4>
+    <ul>
+      <li>읽기(read)는 락 없이 가능 → 높은 처리량</li>
+      <li>쓰기(write)는 bin 단위로 synchronized</li>
+      <li>key 충돌 시 bin tree 구조로 동기화 최소화</li>
+    </ul>
+    <hr />
+  </article>
+
+  <article id="q10">
+    <h3>🧩 10. ArrayList vs LinkedList</h3>
+    <h4>🪄 기초</h4>
+    <ul>
+      <li><b>ArrayList</b> : 내부적으로 배열 기반</li>
+      <li><b>LinkedList</b> : 노드 기반 (이전/다음 포인터)</li>
+    </ul>
+
+    <h4>⚙️ 핵심</h4>
+    <ul>
+      <li>ArrayList → 탐색 빠름 (O(1)) / 삽입·삭제 느림 (O(n))</li>
+      <li>LinkedList → 탐색 느림 (O(n)) / 삽입·삭제 빠름 (O(1))</li>
+      <li>임시 저장용, 인덱스 접근 많을 때는 ArrayList 선호</li>
+    </ul>
+
+    <h4>🔬 심화</h4>
+    <ul>
+      <li>대량 데이터 처리 시 ArrayList가 캐시 효율 높음</li>
+      <li>LinkedList는 메모리 오버헤드가 큼</li>
+      <li>Queue/Deque 용도로는 LinkedList가 유리</li>
+    </ul>
+    <hr />
+  </article>
 </section>
 
